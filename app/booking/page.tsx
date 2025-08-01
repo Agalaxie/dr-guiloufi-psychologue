@@ -49,9 +49,9 @@ export default function BookingPage() {
     if (session?.user) {
       setFormData(prev => ({
         ...prev,
-        email: session.user.email || '',
-        firstName: session.user.name?.split(' ')[0] || '',
-        lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+        email: session.user?.email || '',
+        firstName: session.user?.name?.split(' ')[0] || '',
+        lastName: session.user?.name?.split(' ').slice(1).join(' ') || '',
       }))
     }
   }, [status, session, router])
