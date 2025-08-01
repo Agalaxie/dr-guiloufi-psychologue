@@ -68,6 +68,11 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     return
   }
 
+  if (!supabaseAdmin) {
+    console.error('Supabase not configured - cannot update payment status')
+    return
+  }
+
   try {
     // Mettre à jour le statut du paiement
     await supabaseAdmin
@@ -105,6 +110,11 @@ async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
     return
   }
 
+  if (!supabaseAdmin) {
+    console.error('Supabase not configured - cannot update payment status')
+    return
+  }
+
   try {
     // Mettre à jour le statut du paiement
     await supabaseAdmin
@@ -136,6 +146,11 @@ async function handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent) {
 
   if (!appointmentId) {
     console.error('No appointmentId in payment intent metadata')
+    return
+  }
+
+  if (!supabaseAdmin) {
+    console.error('Supabase not configured - cannot update payment status')
     return
   }
 

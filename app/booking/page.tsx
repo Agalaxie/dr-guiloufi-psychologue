@@ -64,7 +64,7 @@ export default function BookingPage() {
   }, [selectedDate])
 
   const loadAvailableSlots = async () => {
-    if (!selectedDate) return
+    if (!selectedDate || !supabase) return
     
     try {
       const dateStr = selectedDate.toISOString().split('T')[0]
@@ -102,7 +102,7 @@ export default function BookingPage() {
   }
 
   const createAppointment = async () => {
-    if (!session?.user?.email || !selectedDate || !selectedTime) return null
+    if (!session?.user?.email || !selectedDate || !selectedTime || !supabase) return null
 
     try {
       setLoading(true)

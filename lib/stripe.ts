@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js'
 
 // Configuration Stripe côté serveur
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2023-10-16',
 })
 
 // Configuration Stripe côté client

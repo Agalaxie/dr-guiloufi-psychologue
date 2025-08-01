@@ -1,15 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Créer les clients seulement si on a de vraies URLs
+const isValidSupabaseUrl = supabaseUrl.includes('.supabase.co') && !supabaseUrl.includes('placeholder')
 
-// Client avec clé service pour les opérations administratives
-export const supabaseAdmin = createClient(
-  supabaseUrl,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export const supabase = isValidSupabaseUrl 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
+
+// Client avec clé service pour les opérations administratives  
+export const supabaseAdmin = isValidSupabaseUrl
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : null
 
 // Types TypeScript pour nos tables
 export interface User {

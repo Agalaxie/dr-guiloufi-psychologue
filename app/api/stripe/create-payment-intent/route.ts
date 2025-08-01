@@ -20,6 +20,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Vérifier que Supabase est configuré
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: 'Base de données non configurée' }, 
+        { status: 503 }
+      )
+    }
+
     // Vérifier que l'appointment existe et appartient à l'utilisateur
     const { data: appointment, error: appointmentError } = await supabaseAdmin
       .from('appointments')

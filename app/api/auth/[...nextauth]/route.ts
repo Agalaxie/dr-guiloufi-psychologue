@@ -24,6 +24,12 @@ const handler = NextAuth({
   callbacks: {
     async signIn({ user, account, profile }) {
       if (user.email) {
+        // Si supabaseAdmin n'est pas disponible (mode dev), autoriser quand même
+        if (!supabaseAdmin) {
+          console.log('Supabase non configuré - authentification autorisée en mode dev')
+          return true
+        }
+        
         try {
           // Vérifier si l'utilisateur existe dans Supabase
           const { data: existingUser } = await supabaseAdmin
@@ -58,7 +64,7 @@ const handler = NextAuth({
       return true
     },
     async session({ session, token }) {
-      if (session.user?.email) {
+      if (session.user?.email && supabaseAdmin) {
         try {
           // Récupérer le rôle de l'utilisateur
           const { data: userData } = await supabaseAdmin

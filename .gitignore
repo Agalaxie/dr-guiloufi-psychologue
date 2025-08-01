@@ -107,3 +107,4 @@ stripe_*
 # Temporary files
 temp/
 tmp/
+.vercel
