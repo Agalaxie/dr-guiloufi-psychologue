@@ -187,7 +187,7 @@ export async function getBusySlots(date: string): Promise<string[]> {
     });
 
     console.log(`Busy slots found: ${JSON.stringify(busySlots)}`);
-    return [...new Set(busySlots)]; // Supprimer les doublons
+    return Array.from(new Set(busySlots)); // Supprimer les doublons
   } catch (error) {
     console.error('Erreur récupération créneaux occupés:', error);
     return [];
