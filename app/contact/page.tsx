@@ -11,7 +11,7 @@ import {
   Mail, 
   Clock, 
   Calendar,
-  MessageCircle,
+
   Navigation
 } from 'lucide-react'
 
@@ -136,9 +136,9 @@ export default function ContactPage() {
                   </a>
                 </Button>
                 <Button variant="outline" className="h-12" asChild>
-                  <a href="/chat">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Chat en ligne
+                  <a href="tel:+33123456789">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Appeler directement
                   </a>
                 </Button>
               </div>

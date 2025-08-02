@@ -6,7 +6,6 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { 
   Calendar, 
-  MessageCircle, 
   Award, 
   Heart, 
   Brain, 
@@ -99,13 +98,13 @@ export default function HomePage() {
               <Link href="/booking">
                 <Button size="lg" className="w-full sm:w-auto group transition-all duration-300 hover:scale-105 hover:shadow-lg">
                   <Calendar className="h-5 w-5 mr-2 group-hover:animate-bounce" />
-                  Prendre rendez-vous
+                  Prendre rendez-vous - 60€
                 </Button>
               </Link>
-              <Link href="/chat">
+              <Link href="/contact">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto group transition-all duration-300 hover:scale-105">
-                  <MessageCircle className="h-5 w-5 mr-2 group-hover:animate-pulse" />
-                  Chat en ligne
+                  <Phone className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                  Contact
                 </Button>
               </Link>
             </div>
@@ -336,7 +335,7 @@ export default function HomePage() {
               <span className="text-white/70 hidden sm:block">ou</span>
               <Link href="/contact">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border-white/30 text-white hover:bg-white hover:text-primary group hover:scale-105 transition-all duration-300">
-                  <MessageCircle className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                  <Phone className="h-5 w-5 mr-2 group-hover:animate-pulse" />
                   Poser une question
                 </Button>
               </Link>

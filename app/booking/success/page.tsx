@@ -1,39 +1,26 @@
 'use client'
 
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, Calendar, Clock, Video, Home, User } from 'lucide-react'
+import { CheckCircle, Calendar, Home } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { data: session } = useSession()
-  const [appointmentData, setAppointmentData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
-  const appointmentId = searchParams.get('appointment')
+  const sessionId = searchParams.get('session_id')
 
   useEffect(() => {
-    if (appointmentId && session?.user) {
-      // Récupérer les détails du rendez-vous depuis Supabase
-      // Pour l'instant, simuler les données
-      setTimeout(() => {
-        setAppointmentData({
-          id: appointmentId,
-          date: new Date(Date.now() + 86400000), // Demain
-          time: '14:00',
-          type: 'online',
-          status: 'confirmed'
-        })
-        setLoading(false)
-      }, 1000)
-    }
-  }, [appointmentId, session])
+    // Simuler un petit délai pour l'affichage
+    setTimeout(() => {
+      setLoading(false)
+    }, 500)
+  }, [])
 
   if (loading) {
     return (
@@ -65,33 +52,15 @@ export default function BookingSuccessPage() {
                 Rendez-vous confirmé
               </CardTitle>
               <CardDescription>
-                Détails de votre consultation avec Dr. Guiloufi
+                Votre consultation avec Dr. Guiloufi a été réservée avec succès
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Date :</span>
-                    <span className="font-medium">
-                      {appointmentData?.date && new Date(appointmentData.date).toLocaleDateString('fr-FR', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Heure :</span>
-                    <span className="font-medium">{appointmentData?.time}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Type :</span>
-                    <div className="flex items-center">
-                      <Video className="w-4 h-4 mr-1 text-purple-600" />
-                      <span className="font-medium">Consultation en ligne</span>
-                    </div>
+                    <span className="text-gray-600">Montant payé :</span>
+                    <span className="font-medium text-green-600">60€</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Statut :</span>
@@ -99,16 +68,21 @@ export default function BookingSuccessPage() {
                       ✅ Confirmé et payé
                     </span>
                   </div>
+                  {sessionId && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">ID de session :</span>
+                      <span className="font-mono text-xs text-gray-500">{sessionId.slice(0, 20)}...</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-blue-900 mb-2">Informations importantes</h3>
                   <ul className="space-y-2 text-sm text-blue-800">
                     <li>📧 Email de confirmation envoyé</li>
-                    <li>🔗 Lien de connexion envoyé 30 min avant</li>
-                    <li>💻 Testez votre connexion à l'avance</li>
-                    <li>📱 Préparez un environnement calme</li>
-                    <li>📋 Notez vos questions importantes</li>
+                    <li>📅 Rendez-vous ajouté à votre calendrier</li>
+                    <li>🔔 Rappels automatiques activés</li>
+                    <li>📞 Contact : stephdumaz@gmail.com</li>
                   </ul>
                 </div>
               </div>
@@ -142,9 +116,9 @@ export default function BookingSuccessPage() {
                     <span className="text-xs font-bold text-blue-600">2</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Rappel automatique</h4>
+                    <h4 className="font-medium">Rendez-vous dans votre calendrier</h4>
                     <p className="text-sm text-gray-600">
-                      Un rappel sera envoyé 24h avant votre consultation.
+                      L'événement a été automatiquement ajouté au calendrier de Dr. Guiloufi.
                     </p>
                   </div>
                 </div>
@@ -154,9 +128,9 @@ export default function BookingSuccessPage() {
                     <span className="text-xs font-bold text-blue-600">3</span>
                   </div>
                   <div>
-                    <h4 className="font-medium">Lien de connexion</h4>
+                    <h4 className="font-medium">Rappels automatiques</h4>
                     <p className="text-sm text-gray-600">
-                      Le lien de visioconférence sécurisé vous sera envoyé 30 minutes avant le RDV.
+                      Google Calendar enverra des rappels automatiques selon la configuration.
                     </p>
                   </div>
                 </div>
@@ -167,15 +141,7 @@ export default function BookingSuccessPage() {
           {/* Actions rapides */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
-              onClick={() => router.push('/patient/dashboard')}
-              className="flex-1"
-            >
-              <User className="w-4 h-4 mr-2" />
-              Mon espace patient
-            </Button>
-            <Button 
               onClick={() => router.push('/')}
-              variant="outline"
               className="flex-1"
             >
               <Home className="w-4 h-4 mr-2" />
@@ -193,9 +159,8 @@ export default function BookingSuccessPage() {
                 <div>
                   <h4 className="font-medium text-amber-900">Besoin d'aide ?</h4>
                   <p className="text-sm text-amber-800 mt-1">
-                    Si vous avez des questions ou rencontrez un problème technique, 
-                    n'hésitez pas à nous contacter au <strong>01 23 45 67 89</strong> ou 
-                    par email à <strong>contact@dr-guiloufi.fr</strong>
+                    Si vous avez des questions ou rencontrez un problème, 
+                    n'hésitez pas à nous contacter par email à <strong>stephdumaz@gmail.com</strong>
                   </p>
                 </div>
               </div>

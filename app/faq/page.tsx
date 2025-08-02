@@ -4,7 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { HelpCircle, Calendar, MessageCircle, Phone } from 'lucide-react'
+import { HelpCircle, Calendar, Phone } from 'lucide-react'
 
 export default function FAQPage() {
   const faqs = [
@@ -124,10 +124,10 @@ export default function FAQPage() {
 
             <Card className="text-center">
               <CardHeader>
-                <MessageCircle className="h-8 w-8 text-primary mx-auto mb-2" />
-                <CardTitle className="text-lg">Chat en ligne</CardTitle>
+                <Phone className="h-8 w-8 text-primary mx-auto mb-2" />
+                <CardTitle className="text-lg">Contact direct</CardTitle>
                 <CardDescription>
-                  Questions rapides par chat
+                  Questions par téléphone ou email
                 </CardDescription>
               </CardHeader>
               <CardContent>

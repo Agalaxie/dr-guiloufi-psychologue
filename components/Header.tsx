@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Calendar, MessageCircle, HelpCircle, User } from 'lucide-react'
+import { Menu, X, Calendar, User } from 'lucide-react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -44,14 +44,8 @@ export default function Header() {
 
           {/* Boutons d'action */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/chat">
-              <Button variant="outline" size="sm">
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Chat
-              </Button>
-            </Link>
             <Link href="/booking">
-              <Button>
+              <Button size="lg">
                 <Calendar className="h-4 w-4 mr-2" />
                 Prendre RDV
               </Button>
@@ -113,15 +107,9 @@ export default function Header() {
               >
                 Contact
               </Link>
-              <div className="px-3 py-2 space-y-2">
-                <Link href="/chat" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Chat
-                  </Button>
-                </Link>
+              <div className="px-3 py-2">
                 <Link href="/booking" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full">
+                  <Button className="w-full" size="lg">
                     <Calendar className="h-4 w-4 mr-2" />
                     Prendre RDV
                   </Button>
