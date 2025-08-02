@@ -32,14 +32,21 @@ export function createCalendarClient() {
 
 // Vérifier si un créneau est disponible
 export async function isTimeSlotAvailable(date: string, time: string): Promise<boolean> {
+  console.log(`=== isTimeSlotAvailable called with date: ${date}, time: ${time} ===`);
+  
   try {
     const calendar = createCalendarClient();
+    console.log('✅ Calendar client created successfully');
     
-    // Convertir date + time en datetime ISO
-    const startDateTime = new Date(`${date}T${time}:00`);
+    // Convertir date + time en datetime ISO avec timezone France
+    const startDateTime = new Date(`${date}T${time}:00+02:00`); // Timezone France été
     const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); // +1 heure
 
+    console.log(`Checking availability for ${date} ${time}`);
+    console.log(`Start: ${startDateTime.toISOString()}, End: ${endDateTime.toISOString()}`);
+
     // Chercher les événements à ce moment
+    console.log('📅 Calling Google Calendar API...');
     const response = await calendar.events.list({
       calendarId: googleCalendarConfig.calendarId,
       timeMin: startDateTime.toISOString(),
@@ -47,13 +54,27 @@ export async function isTimeSlotAvailable(date: string, time: string): Promise<b
       singleEvents: true,
     });
 
+    console.log('✅ Google Calendar API response received');
     const events = response.data.items || [];
+    console.log(`Found ${events.length} events for this time slot`);
+    
+    if (events.length > 0) {
+      console.log('Events found:', events.map(e => ({ summary: e.summary, start: e.start })));
+    }
     
     // Si des événements existent, le créneau n'est pas disponible
-    return events.length === 0;
+    const available = events.length === 0;
+    console.log(`🎯 FINAL RESULT: Slot ${date} ${time} is ${available ? 'AVAILABLE' : 'BUSY'}`);
+    return available;
   } catch (error) {
-    console.error('Erreur vérification disponibilité:', error);
+    console.error('❌ ERREUR dans isTimeSlotAvailable:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     // En cas d'erreur, considérer comme non disponible pour éviter les doubles réservations
+    console.log('🚫 Returning FALSE due to error');
     return false;
   }
 }
@@ -175,10 +196,18 @@ export async function getBusySlots(date: string): Promise<string[]> {
 
     events.forEach(event => {
       if (event.start?.dateTime) {
-        // Événement avec heure précise
+        // Événement avec heure précise - Convertir en timezone France
         const startTime = new Date(event.start.dateTime);
-        const hour = startTime.getHours().toString().padStart(2, '0');
-        busySlots.push(`${hour}:00`);
+        
+        // Convertir en heure française (Europe/Paris)
+        const frenchTime = new Intl.DateTimeFormat('fr-FR', {
+          timeZone: 'Europe/Paris',
+          hour: '2-digit',
+          hour12: false
+        }).format(startTime);
+        
+        console.log(`Event "${event.summary}" at ${event.start.dateTime} → ${frenchTime}:00 (France time)`);
+        busySlots.push(`${frenchTime}:00`);
       } else if (event.start?.date) {
         // Événement "toute la journée" - bloquer tous les créneaux
         const TIME_SLOTS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
