@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS appointment_bookings (
     client_phone VARCHAR(20),
     reason TEXT,
     message TEXT,
+    consultation_type VARCHAR(20) DEFAULT 'cabinet' CHECK (consultation_type IN ('cabinet', 'visio')),
     status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled')),
     stripe_session_id VARCHAR(255) UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

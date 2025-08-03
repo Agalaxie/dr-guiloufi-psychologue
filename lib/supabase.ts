@@ -43,6 +43,7 @@ export async function createPendingAppointment(appointmentData: {
   client_phone: string
   reason: string
   message?: string
+  consultation_type?: string
   stripe_session_id: string
 }): Promise<{ success: boolean; id?: string; error?: string }> {
   // Vérifier encore une fois la disponibilité
@@ -58,6 +59,7 @@ export async function createPendingAppointment(appointmentData: {
     .from('appointment_bookings')
     .insert([{
       ...appointmentData,
+      consultation_type: appointmentData.consultation_type || 'cabinet',
       status: 'pending'
     }])
     .select('id')

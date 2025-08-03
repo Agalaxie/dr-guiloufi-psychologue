@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { CalendarDays, Clock, CreditCard, Check, AlertCircle } from 'lucide-react'
+import { CalendarDays, Clock, CreditCard, Check, AlertCircle, MapPin, Video } from 'lucide-react'
 
 // Créneaux horaires fixes (hard-codés)
 const TIME_SLOTS = [
@@ -22,6 +22,7 @@ const TIME_SLOTS = [
 export default function BookingPage() {
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [selectedTime, setSelectedTime] = useState<string>('')
+  const [consultationType, setConsultationType] = useState<string>('cabinet')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -116,6 +117,7 @@ export default function BookingPage() {
           phone: formData.phone,
           reason: formData.reason,
           message: formData.message,
+          consultationType: consultationType,
         }),
       })
 
@@ -254,11 +256,57 @@ export default function BookingPage() {
               </div>
             )}
 
+            {/* Type de consultation */}
+            {selectedDate && selectedTime && (
+              <div>
+                <Label className="text-lg font-medium mb-4 block">
+                  3. Type de consultation
+                </Label>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div 
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                      consultationType === 'cabinet' 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setConsultationType('cabinet')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="w-6 h-6 text-blue-600" />
+                      <div>
+                        <h3 className="font-semibold">Au cabinet</h3>
+                        <p className="text-sm text-gray-600">Consultation en présentiel</p>
+                        <p className="text-xs text-gray-500 mt-1">123 Rue de la Psychologie, Paris</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div 
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                      consultationType === 'visio' 
+                        ? 'border-green-500 bg-green-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setConsultationType('visio')}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Video className="w-6 h-6 text-green-600" />
+                      <div>
+                        <h3 className="font-semibold">En visioconférence</h3>
+                        <p className="text-sm text-gray-600">Consultation à distance</p>
+                        <p className="text-xs text-gray-500 mt-1">Lien envoyé par email</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Formulaire */}
             {selectedDate && selectedTime && (
               <div>
                 <Label className="text-lg font-medium mb-4 block">
-                  3. Vos informations
+                  4. Vos informations
                 </Label>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
@@ -327,7 +375,7 @@ export default function BookingPage() {
             {selectedDate && selectedTime && formData.firstName && formData.lastName && formData.email && formData.phone && formData.reason && (
               <div>
                 <Label className="text-lg font-medium mb-4 block">
-                  4. Finaliser la réservation
+                  5. Finaliser la réservation
                 </Label>
                 
                 {error && (
@@ -344,6 +392,22 @@ export default function BookingPage() {
                   <div className="space-y-2 text-sm">
                     <p><strong>Date :</strong> {format(selectedDate, 'dd MMMM yyyy', { locale: fr })}</p>
                     <p><strong>Heure :</strong> {selectedTime}</p>
+                    <p className="flex items-center">
+                      <strong>Type :</strong> 
+                      <span className="ml-2 flex items-center">
+                        {consultationType === 'cabinet' ? (
+                          <>
+                            <MapPin className="w-4 h-4 mr-1 text-blue-600" />
+                            Au cabinet
+                          </>
+                        ) : (
+                          <>
+                            <Video className="w-4 h-4 mr-1 text-green-600" />
+                            En visioconférence
+                          </>
+                        )}
+                      </span>
+                    </p>
                     <p><strong>Patient :</strong> {formData.firstName} {formData.lastName}</p>
                     <p><strong>Motif :</strong> {formData.reason}</p>
                     <p><strong>Tarif :</strong> 60€</p>

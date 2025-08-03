@@ -4,23 +4,51 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, Calendar, Home } from 'lucide-react'
+import { CheckCircle, Calendar, Home, MapPin, Video } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
+
+interface AppointmentDetails {
+  date: string
+  time: string
+  consultation_type: string
+  client_name: string
+  client_email: string
+  amount: number
+}
 
 export default function BookingSuccessPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails | null>(null)
 
   const sessionId = searchParams.get('session_id')
 
   useEffect(() => {
-    // Simuler un petit délai pour l'affichage
-    setTimeout(() => {
-      setLoading(false)
-    }, 500)
-  }, [])
+    const fetchAppointmentDetails = async () => {
+      if (sessionId) {
+        try {
+          const response = await fetch(`/api/bookings/details?session_id=${sessionId}`)
+          if (response.ok) {
+            const data = await response.json()
+            setAppointmentDetails(data.appointment)
+          }
+        } catch (error) {
+          console.error('Erreur récupération détails RDV:', error)
+        }
+      }
+      
+      // Délai pour l'affichage
+      setTimeout(() => {
+        setLoading(false)
+      }, 500)
+    }
+
+    fetchAppointmentDetails()
+  }, [sessionId])
 
   if (loading) {
     return (
@@ -58,9 +86,41 @@ export default function BookingSuccessPage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
+                  {appointmentDetails && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Date :</span>
+                        <span className="font-medium">
+                          {format(new Date(appointmentDetails.date), 'dd MMMM yyyy', { locale: fr })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Heure :</span>
+                        <span className="font-medium">{appointmentDetails.time}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Type de consultation :</span>
+                        <span className="flex items-center font-medium">
+                          {appointmentDetails.consultation_type === 'cabinet' ? (
+                            <>
+                              <MapPin className="w-4 h-4 mr-1 text-blue-600" />
+                              Au cabinet
+                            </>
+                          ) : (
+                            <>
+                              <Video className="w-4 h-4 mr-1 text-green-600" />
+                              En visio
+                            </>
+                          )}
+                        </span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-600">Montant payé :</span>
-                    <span className="font-medium text-green-600">60€</span>
+                    <span className="font-medium text-green-600">
+                      {appointmentDetails?.amount ? `${appointmentDetails.amount}€` : '60€'}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Statut :</span>

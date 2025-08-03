@@ -16,7 +16,8 @@ export async function POST(request: NextRequest) {
       email,
       phone,
       reason,
-      message
+      message,
+      consultationType
     } = await request.json();
 
     // Validation
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
             currency: 'eur',
             product_data: {
               name: 'Consultation psychologique',
-              description: `Rendez-vous le ${date} à ${time}`,
+              description: `Rendez-vous le ${date} à ${time} - ${consultationType === 'cabinet' ? 'Au cabinet' : 'En visioconférence'}`,
             },
             unit_amount: 6000, // 60€ en centimes
           },
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
         client_phone: phone,
         reason: reason,
         message: message || '',
+        consultation_type: consultationType || 'cabinet',
       },
     });
 
@@ -67,6 +69,7 @@ export async function POST(request: NextRequest) {
       client_phone: phone,
       reason,
       message,
+      consultation_type: consultationType || 'cabinet',
       stripe_session_id: stripeSession.id,
     });
 
