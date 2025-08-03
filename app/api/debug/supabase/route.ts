@@ -1,31 +1,70 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 export async function GET(request: NextRequest) {
   try {
-    // Test de connexion basique à Supabase
-    const { data, error } = await supabase
-      .from('blocked_slots')
-      .select('*')
-      .limit(1);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    const diagnostics = {
-      supabase_connection: !error,
-      blocked_slots_table_exists: !error,
-      error_message: error?.message || null,
-      test_query_result: data || null
+    const diagnostics: any = {
+      env_variables: {
+        supabase_url_set: !!supabaseUrl,
+        supabase_anon_key_set: !!supabaseAnonKey,
+        supabase_service_key_set: !!supabaseServiceKey,
+        supabase_url: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'NOT_SET'
+      }
     };
 
-    if (error) {
-      console.error('Erreur Supabase:', error);
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return NextResponse.json({
+        ...diagnostics,
+        error: 'Variables d\'environnement Supabase manquantes'
+      });
+    }
+
+    // Test avec anon key
+    const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey);
+    
+    const { data: anonData, error: anonError } = await supabaseAnon
+      .from('blocked_slots')
+      .select('count')
+      .limit(1);
+
+    diagnostics.anon_key_test = {
+      success: !anonError,
+      error: anonError?.message || null
+    };
+
+    // Test avec service role key si disponible
+    if (supabaseServiceKey) {
+      const supabaseService = createClient(supabaseUrl, supabaseServiceKey);
+      
+      const { data: serviceData, error: serviceError } = await supabaseService
+        .from('blocked_slots')
+        .select('count')
+        .limit(1);
+
+      diagnostics.service_key_test = {
+        success: !serviceError,
+        error: serviceError?.message || null
+      };
+
+      // Test de création de table si service key fonctionne
+      if (!serviceError) {
+        const { error: createError } = await supabaseService.rpc('version');
+        diagnostics.database_access = {
+          can_execute_functions: !createError,
+          version_check_error: createError?.message || null
+        };
+      }
     }
 
     return NextResponse.json(diagnostics);
   } catch (error) {
     console.error('Erreur diagnostic Supabase:', error);
     return NextResponse.json({
-      supabase_connection: false,
-      error: 'Erreur de connexion Supabase',
+      error: 'Erreur de diagnostic Supabase',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
