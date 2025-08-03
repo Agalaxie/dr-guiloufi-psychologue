@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Importer la fonction de vérification des tokens
-// (En production, utilisez une base de données ou Redis)
-let validTokens = new Set<string>();
+import { isValidToken } from '../../../../lib/admin-auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,9 +14,8 @@ export async function GET(request: NextRequest) {
 
     const token = authHeader.substring(7);
     
-    // En production, vérifiez contre votre base de données
-    // Pour la démo, on accepte tous les tokens non vides
-    if (!token) {
+    // Vérifier le token avec notre système d'authentification
+    if (!isValidToken(token)) {
       return NextResponse.json(
         { error: 'Token invalide' },
         { status: 401 }
