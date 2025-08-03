@@ -156,23 +156,55 @@ export default function BookingPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <h3 className="font-semibold text-green-800 mb-3">Votre rendez-vous est confirmé</h3>
+                  <h3 className="font-semibold text-green-800 mb-3">✅ Votre rendez-vous est confirmé</h3>
                   <p className="text-green-700 mb-4">
                     Vous recevrez un email de confirmation avec tous les détails de votre rendez-vous.
                   </p>
                   <div className="flex items-center text-green-600">
                     <Check className="w-5 h-5 mr-2" />
-                    <span>Paiement effectué avec succès</span>
+                    <span>Paiement effectué avec succès (60€)</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-gray-800 mb-3">📋 Récapitulatif de votre réservation</h4>
+                  <div className="space-y-2 text-sm">
+                    <p><strong>📅 Date :</strong> Confirmée (voir email de confirmation)</p>
+                    <p><strong>🕒 Heure :</strong> Confirmée (voir email de confirmation)</p>
+                    <p><strong>💳 Montant payé :</strong> 60€</p>
+                    <p><strong>📧 Confirmation :</strong> Envoyée par email</p>
+                    <p><strong>🔄 Statut :</strong> <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Confirmé et payé</span></p>
                   </div>
                 </div>
                 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                  <h4 className="font-medium text-blue-800 mb-2">Informations importantes :</h4>
+                  <h4 className="font-medium text-blue-800 mb-2">ℹ️ Informations importantes :</h4>
                   <ul className="text-blue-700 space-y-1 text-sm">
-                    <li>• Un email de confirmation vous a été envoyé</li>
-                    <li>• En cas d'empêchement, merci de prévenir 24h à l'avance</li>
-                    <li>• Apportez votre carte d'identité pour le premier rendez-vous</li>
+                    <li>• 📧 Un email de confirmation détaillé vous a été envoyé</li>
+                    <li>• 📅 Le rendez-vous a été ajouté au calendrier de Dr. Guiloufi</li>
+                    <li>• ⏰ En cas d'empêchement, merci de prévenir 24h à l'avance</li>
+                    <li>• 🆔 Apportez votre carte d'identité pour le premier rendez-vous</li>
+                    <li>• 📞 Contact : stephdumaz@gmail.com</li>
                   </ul>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+                  <h4 className="font-medium text-amber-800 mb-2">💡 Prochaines étapes :</h4>
+                  <div className="space-y-2 text-sm text-amber-700">
+                    <p><strong>1.</strong> Vérifiez votre email pour les détails complets</p>
+                    <p><strong>2.</strong> Notez la date et l'heure dans votre agenda</p>
+                    <p><strong>3.</strong> Préparez vos questions pour la consultation</p>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <Button 
+                    onClick={() => window.location.href = '/'}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Retour à l'accueil
+                  </Button>
                 </div>
               </div>
             </CardContent>
