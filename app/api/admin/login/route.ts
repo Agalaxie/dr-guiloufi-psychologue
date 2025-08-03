@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { generateToken, addValidToken, removeValidToken } from '../../../../lib/admin-auth';
 
 // Mot de passe admin (à changer !)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
-
-// Générer un token simple
-function generateToken(): string {
-  return crypto.randomBytes(32).toString('hex');
-}
-
-// Stocker les tokens valides (en production, utiliser Redis ou base de données)
-const validTokens = new Set<string>();
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,11 +25,11 @@ export async function POST(request: NextRequest) {
 
     // Générer un token
     const token = generateToken();
-    validTokens.add(token);
+    addValidToken(token);
 
     // Supprimer le token après 24h
     setTimeout(() => {
-      validTokens.delete(token);
+      removeValidToken(token);
     }, 24 * 60 * 60 * 1000);
 
     return NextResponse.json({
@@ -55,7 +47,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Fonction pour vérifier un token (utilisée par d'autres endpoints)
-export function isValidToken(token: string): boolean {
-  return validTokens.has(token);
-}
