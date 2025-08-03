@@ -46,7 +46,10 @@ export default function ScheduleManagement() {
       const busyData = await busyResponse.json()
       
       // Récupérer les détails des créneaux bloqués
-      const blockedResponse = await fetch(`/api/admin/blocked-slots?date=${dateStr}`)
+      const token = localStorage.getItem('admin_token')
+      const blockedResponse = await fetch(`/api/admin/blocked-slots?date=${dateStr}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      })
       const blockedData = await blockedResponse.json()
       
       setBlockedSlots(busyData.busySlots || [])
@@ -70,17 +73,27 @@ export default function ScheduleManagement() {
     )
 
     try {
+      const token = localStorage.getItem('admin_token')
+      if (!token) {
+        alert('Token d\'authentification manquant')
+        return
+      }
+
       const endpoint = isCurrentlyBlocked ? '/api/admin/unblock-slot' : '/api/admin/block-slot'
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ date: dateStr, time })
       })
 
       if (response.ok) {
         loadBlockedSlots() // Recharger
       } else {
-        alert('Erreur lors de la modification')
+        const errorData = await response.json()
+        alert(`Erreur: ${errorData.error || 'Erreur lors de la modification'}`)
       }
     } catch (error) {
       console.error('Erreur toggle slot:', error)
