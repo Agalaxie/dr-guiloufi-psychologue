@@ -12,7 +12,10 @@
       "Bash(git push:*)",
       "Bash(git fetch:*)",
       "Bash(git commit:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:dr-guiloufi-psychologue.vercel.app)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm install:*)"
     ],
     "deny": []
   }

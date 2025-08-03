@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isTimeSlotAvailable, getBusySlots } from '@/lib/google-calendar';
+import { isTimeSlotAvailable, getBusySlots } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {

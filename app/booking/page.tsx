@@ -53,7 +53,12 @@ export default function BookingPage() {
       setLoadingSlots(true)
       setSelectedTime('') // Reset du créneau sélectionné
       
-      fetch(`/api/calendar/check-availability?date=${selectedDate.toISOString().split('T')[0]}`)
+      // Utiliser une méthode qui ne change pas selon la timezone
+      const dateStr = selectedDate.getFullYear() + '-' + 
+                     String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                     String(selectedDate.getDate()).padStart(2, '0')
+      
+      fetch(`/api/calendar/check-availability?date=${dateStr}`)
         .then(res => res.json())
         .then(data => {
           setBusySlots(data.busySlots || [])
@@ -78,7 +83,7 @@ export default function BookingPage() {
     setError('')
 
     try {
-      // 1. Vérifier la disponibilité en temps réel avec Google Calendar
+      // 1. Vérifier la disponibilité en temps réel avec Supabase
       const availabilityResponse = await fetch('/api/calendar/check-availability', {
         method: 'POST',
         headers: {
@@ -97,17 +102,20 @@ export default function BookingPage() {
       }
 
       // 2. Créer la session Stripe Checkout si disponible
-      const response = await fetch('/api/booking/create-with-calendar', {
+      const response = await fetch('/api/bookings/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          appointmentData: {
-            date: selectedDate.toISOString().split('T')[0],
-            time: selectedTime,
-            clientInfo: formData
-          }
+          date: selectedDate.toISOString().split('T')[0],
+          time: selectedTime,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          reason: formData.reason,
+          message: formData.message,
         }),
       })
 
@@ -118,8 +126,8 @@ export default function BookingPage() {
       }
 
       // Rediriger vers Stripe Checkout
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url
       }
     } catch (err) {
       console.error('Erreur:', err)
@@ -210,6 +218,7 @@ export default function BookingPage() {
                 />
               </div>
             </div>
+
 
             {/* Sélection de l'heure */}
             {selectedDate && (
