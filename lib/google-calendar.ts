@@ -69,9 +69,9 @@ export async function isTimeSlotAvailable(date: string, time: string): Promise<b
   } catch (error) {
     console.error('❌ ERREUR dans isTimeSlotAvailable:', error);
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
     });
     // En cas d'erreur, considérer comme non disponible pour éviter les doubles réservations
     console.log('🚫 Returning FALSE due to error');
